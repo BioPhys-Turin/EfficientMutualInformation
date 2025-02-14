@@ -1,7 +1,7 @@
 import numpy as np
 
 rng = np.random.default_rng(3421)
-data = np.random.randint(0, 100, (50, 100000))
+data = np.random.randint(0, 100, (50, 10000000))
 
 np.savetxt('data.csv', data, fmt='%d', delimiter=",")
 # data = np.loadtxt('data.csv', delimiter=",")
