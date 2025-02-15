@@ -15,17 +15,10 @@ typedef uint8_t datatype;
 
 float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
 {
-<<<<<<< HEAD:local/src/main.cpp
-    std::map<std::pair<datatype, datatype>, float> pxy;		// define map pxy that associate a pair of datatype with a float (joint probability)
-    std::map<datatype, float> px;							// define map px that associate a datatype with a float (marginal probability)
-    std::map<datatype, float> py;							// sam as px but py
-    uint32_t countxy = y_true.size();						// countxy is the size of the input vectors
-=======
-    // std::map<std::pair<datatype, datatype>, float> pxy;
-    // std::map<datatype, float> px;
-    // std::map<datatype, float> py;
-    // uint32_t countxy = y_true.size();
->>>>>>> 28c85a78fdba684f3829446c37d5ceb24811dc5a:main.cpp
+    //std::map<std::pair<datatype, datatype>, float> pxy;		// define map pxy that associate a pair of datatype with a float (joint probability)
+    //std::map<datatype, float> px;							// define map px that associate a datatype with a float (marginal probability)
+    //std::map<datatype, float> py;							// sam as px but py
+    //uint32_t countxy = y_true.size();						// countxy is the size of the input vectors
 
 
     /**
@@ -36,7 +29,8 @@ float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
     std::map<datatype, float> px[16];
     std::map<datatype, float> py[16];
     uint32_t countxy = y_true.size();
-    #pragma omp parallel
+    
+	#pragma omp parallel
     {
         uint16_t nthreads = omp_get_num_threads();
         uint16_t chunk_size = countxy / (nthreads + 1);
@@ -93,19 +87,11 @@ float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
     }
     
 
-<<<<<<< HEAD:local/src/main.cpp
-    for (size_t i = 0; i < countxy; i++) {			// iterate over the size of the input vectors
-        pxy[{y_true[i], y_pred[i]}]+=1./countxy;	
-        px[y_true[i]]+=1./countxy;
-        py[y_pred[i]]+=1./countxy;
-    }
-=======
     // for (size_t i = 0; i < countxy; i++) {
     //     pxy[{y_true[i], y_pred[i]}]+=1./countxy;
     //     px[y_true[i]]+=1./countxy;
     //     py[y_pred[i]]+=1./countxy;
     // }
->>>>>>> 28c85a78fdba684f3829446c37d5ceb24811dc5a:main.cpp
 
     float H = 0;
     #pragma omp parallel for reduction(+:H)
@@ -165,7 +151,7 @@ int main(int argc, char const *argv[])
 	for (int i = 0; i < num_vectors; i++){
 		for (int j=i; j<num_vectors; j++){
 			double mi_value = Hxy(data[i], data[j]);	// compute the MI between the i-th and j-th vectors
-			std::cout << "MI(" << i << "," << j << ")=" << mi_value << std::endl;
+			// std::cout << "MI(" << i << "," << j << ")=" << mi_value << std::endl;
 			mi_matrix[i][j] = mi_value;
 			mi_matrix[j][i] = mi_value;
 		}
