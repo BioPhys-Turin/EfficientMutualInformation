@@ -1,0 +1,10 @@
+.DELETE_ON_ERROR:
+
+PATH := $(PATH):../local/bin/
+
+test_matrix.csv:
+	generate_testmatrix 5 10 0 200 > $@
+    # arguments: number of rows, number of columns, min value, max value
+
+mi_matrix_sklearn.csv: test_matrix.csv
+	cat $< | skl_mi > $@

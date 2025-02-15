@@ -14,10 +14,10 @@ typedef uint8_t datatype;
 
 float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
 {
-    std::map<std::pair<datatype, datatype>, float> pxy;
-    std::map<datatype, float> px;
-    std::map<datatype, float> py;
-    uint32_t countxy = y_true.size();
+    std::map<std::pair<datatype, datatype>, float> pxy;		// define map pxy that associate a pair of datatype with a float (joint probability)
+    std::map<datatype, float> px;							// define map px that associate a datatype with a float (marginal probability)
+    std::map<datatype, float> py;							// sam as px but py
+    uint32_t countxy = y_true.size();						// countxy is the size of the input vectors
 
 
     /**
@@ -90,8 +90,8 @@ float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
     // }
     
 
-    for (size_t i = 0; i < countxy; i++) {
-        pxy[{y_true[i], y_pred[i]}]+=1./countxy;
+    for (size_t i = 0; i < countxy; i++) {			// iterate over the size of the input vectors
+        pxy[{y_true[i], y_pred[i]}]+=1./countxy;	
         px[y_true[i]]+=1./countxy;
         py[y_pred[i]]+=1./countxy;
     }
@@ -116,35 +116,22 @@ float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
     return H;
 }
 
-    int main(int argc, char const *argv[])
+
+
+
+int main(int argc, char const *argv[])
 {
-
     std::vector<std::vector<datatype>> data;
-
-    int ncells = 0;
-    if (argc > 1)
-        ncells = std::stoi(argv[1]);
-
-    if(argc > 2){
-        omp_set_num_threads(std::stoi(argv[2]));
+	//int n_threads = 1; // default number of threads used to parallelize the calculation of the entries of the output matrix
+	int num_vectors = 0;
+    
+	if (argc > 2){
+		omp_set_num_threads(std::stoi(argv[2])); // Set OpenMP threads
         #pragma omp parallel master
-        std::cout<<"Using threads: "<<omp_get_num_threads()<<std::endl;
-    }
-    //random data
-    // for(int i =0;i<40;i++){
-    //     auto a = std::vector<int>(1000);
-    //     for (int j = 0; j < ncells; j++)
-    //         a.push_back(rand() % 10);
-    //     data.push_back(a);
-    // }
+        std::cout << "Using threads: " << omp_get_num_threads() << std::endl; // Output number of threads
+	}
 
-
-    //easy data
-    // data.push_back({1,1,2,3,1});
-    // data.push_back({0,1,0,3,0});
-
-
-    auto file = std::ifstream("data.csv");
+    auto file = std::ifstream("./data/test_matrix.csv");
     std::string line;
     while (std::getline(file, line))
     {
@@ -157,16 +144,35 @@ float Hxy(std::vector<datatype> &y_true, std::vector<datatype> &y_pred)
         }
         data.push_back(row);
     }
-    ncells=data[0].size();
+    num_vectors=5;
+
+	std::vector<std::vector<double>> mi_matrix(num_vectors, std::vector<double>(num_vectors, 0.0)); // create a matrix of size num_vectors x num_vectors filled with zeros
     
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();	// start the timer
 
-    float result = Hxy(data[0], data[1]);
+	// Compute the MI matrix
+	for (int i = 0; i < num_vectors; i++){
+		for (int j=i; j<num_vectors; j++){
+			double mi_value = Hxy(data[i], data[j]);	// compute the MI between the i-th and j-th vectors
+			std::cout << "MI(" << i << "," << j << ")=" << mi_value << std::endl;
+			mi_matrix[i][j] = mi_value;
+			mi_matrix[j][i] = mi_value;
+		}
+	}
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> duration = end - start;
+	auto end = std::chrono::high_resolution_clock::now();	// End timing execution
+	std::chrono::duration<double> duration = end - start;
 
-    std::cout << "Elapsed time: " << duration.count() << " seconds H=" <<result <<" cells="<<ncells<< std::endl;
-
-    return 0;
+	// Write the MI matrix CSV file
+	std::ofstream outfile("./data/mi_matrix_pippo.csv");
+	for (const auto &row : mi_matrix){
+		for (size_t j=0; j<row.size(); j++){
+			outfile << row[j];
+			if(j<row.size() -1) outfile << ","; 	// Add a comma unless it's the last element
+		}
+		outfile << "\n";
+	}
+	outfile.close();
+	std::cout << "Elapsed time: " << duration.count() << ", cells="<<num_vectors<< std::endl;
+	return 0;
 }
