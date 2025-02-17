@@ -2,3 +2,5 @@ venv/
 build/
 *.csv
 */**/hk
+.vscode/
+hk

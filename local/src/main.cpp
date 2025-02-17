@@ -120,7 +120,8 @@ int main(int argc, char const *argv[])
 {
     std::vector<std::vector<datatype>> data;
 	//int n_threads = 1; // default number of threads used to parallelize the calculation of the entries of the output matrix
-	int num_vectors = 0;
+	size_t num_vectors = 0;
+    std::string filename;
     
 	if (argc > 2){
 		omp_set_num_threads(std::stoi(argv[2])); // Set OpenMP threads
@@ -128,7 +129,14 @@ int main(int argc, char const *argv[])
         std::cout << "Using threads: " << omp_get_num_threads() << std::endl; // Output number of threads
 	}
 
-    auto file = std::ifstream("./data/test_matrix.csv");
+    if(argc > 1){
+        filename = std::string(argv[1]);
+    }else{
+        std::cerr << "Please provide a file to read the data from" << std::endl;
+        return 1;
+    }
+
+    auto file = std::ifstream(filename);
     std::string line;
     while (std::getline(file, line))
     {
@@ -141,6 +149,7 @@ int main(int argc, char const *argv[])
         }
         data.push_back(row);
     }
+    file.close();
     num_vectors=data.size();
 
 	std::vector<std::vector<double>> mi_matrix(num_vectors, std::vector<double>(num_vectors, 0.0)); // create a matrix of size num_vectors x num_vectors filled with zeros
@@ -150,20 +159,27 @@ int main(int argc, char const *argv[])
 	// Compute the MI matrix
     omp_set_nested(1);
     #pragma omp parallel for
-	for (int i = 0; i < num_vectors; i++){
-		for (int j=i; j<num_vectors; j++){
-			double mi_value = Hxy(data[i], data[j]);	// compute the MI between the i-th and j-th vectors
-			// std::cout << "MI(" << i << "," << j << ")=" << mi_value << std::endl;
-			mi_matrix[i][j] = mi_value;
+    for (size_t i = 0; i < num_vectors; i++)
+    {
+        for (size_t j = i; j < num_vectors; j++)
+        {
+            double mi_value = Hxy(data[i], data[j]);	// compute the MI between the i-th and j-th vectors
+            #ifdef DEBUG
+			std::cout << "MI(" << i << "," << j << ")=" << mi_value << std::endl;
+			#endif
+            mi_matrix[i][j] = mi_value;
 			mi_matrix[j][i] = mi_value;
-		}
-	}
+        }
+    }
 
-	auto end = std::chrono::high_resolution_clock::now();	// End timing execution
+    auto end = std::chrono::high_resolution_clock::now();	// End timing execution
 	std::chrono::duration<double> duration = end - start;
 
 	// Write the MI matrix CSV file
-	std::ofstream outfile("./data/mi_matrix_pippo.csv");
+
+    filename = filename.substr(0, filename.find_last_of(".")) + "_MI.csv";
+
+	std::ofstream outfile(filename);
 	for (const auto &row : mi_matrix){
 		for (size_t j=0; j<row.size(); j++){
 			outfile << row[j];
