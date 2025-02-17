@@ -141,13 +141,15 @@ int main(int argc, char const *argv[])
         }
         data.push_back(row);
     }
-    num_vectors=5;
+    num_vectors=data.size();
 
 	std::vector<std::vector<double>> mi_matrix(num_vectors, std::vector<double>(num_vectors, 0.0)); // create a matrix of size num_vectors x num_vectors filled with zeros
     
     auto start = std::chrono::high_resolution_clock::now();	// start the timer
 
 	// Compute the MI matrix
+    omp_set_nested(1);
+    #pragma omp parallel for
 	for (int i = 0; i < num_vectors; i++){
 		for (int j=i; j<num_vectors; j++){
 			double mi_value = Hxy(data[i], data[j]);	// compute the MI between the i-th and j-th vectors

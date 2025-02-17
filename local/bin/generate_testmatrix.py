@@ -15,5 +15,4 @@ matrix = np.random.randint(int(min_val), int(max_val), (int(num_rows), int(num_c
 matrix[1] = matrix[0]
 
 # print the matrix to stdout
-print(pd.DataFrame(matrix).to_csv(index=False, header=False, sep=','))
-
+pd.DataFrame(matrix).to_csv(index=False, header=False, sep=',', path_or_buf=sys.stdout)
