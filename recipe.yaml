@@ -1,0 +1,37 @@
+context: {}
+package:
+
+  name: emi
+  version: 0.1.0
+
+source:
+  path: ./
+
+build:
+  number: 0
+  script_env:
+    CXXFLAGS: "-std=c++14 -O3 -Wall -Wextra -Wpedantic -Werror"
+
+test:
+  commands:
+    - $PREFIX/bin/hk
+
+requirements:
+  build:
+    - cmake
+    - make
+    - gxx  # Use `clang` on macOS
+
+  host: 
+    - gxx
+    - libgcc-ng
+
+  run:
+    - gxx
+    - libgcc-ng
+
+about:
+  home: https://biophys-turin.github.io
+  summary: A simple tool to estimate mutual information.
+  license: MIT
+
