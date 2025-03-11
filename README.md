@@ -13,5 +13,9 @@ make
 ./local/src/hk
 ```
 
+
 ## Requirements:
 `requirements.txt`
+
+## Benchmark 
+![plot.png](plot.png)
