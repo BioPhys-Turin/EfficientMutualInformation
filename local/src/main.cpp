@@ -133,7 +133,7 @@ int main(int argc, char const *argv[])
         filename = std::string(argv[1]);
     }else{
         std::cerr << "Please provide a file to read the data from" << std::endl;
-        return 1;
+        return 0;
     }
 
     auto file = std::ifstream(filename);

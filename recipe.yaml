@@ -2,7 +2,7 @@ context: {}
 package:
 
   name: emi
-  version: 1.0.0
+  version: 0.1.0
 
 source:
   path: ./
@@ -20,13 +20,14 @@ requirements:
   build:
     - cmake
     - make
-    - gxx>=13.3.0  # Use `clang` on macOS
+    - gxx  # Use `clang` on macOS
 
   host: 
-    - gxx>=13.3.0
+    - gxx
     - libgcc-ng
-  
+
   run:
+    - gxx
     - libgcc-ng
 
 about:

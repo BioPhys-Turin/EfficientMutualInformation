@@ -1,14 +1,17 @@
+{% set name = "emi" %}
+{% set version = "0.1.0" %}
+
 package:
-  name: emi
-  version: "1.0.0"
+  name: {{ name|lower }}
+  version: {{version}}
 
 source:
   path: ./
+  # url: 
+  # sha256:
 
 build:
   number: 0
-  script_env:
-    - CXXFLAGS="-std=c++14 -O3 -Wall -Wextra -Wpedantic -Werror"
 
 test: 
   commands:
@@ -22,12 +25,22 @@ requirements:
 
   host: 
     - gxx
-    - libgxx-ng
+    - libgcc-ng
+    - libstdcxx-ng
   
   run:
-    - libgxx-ng
+    - gxx
+    - libgcc-ng
+    - libstdcxx-ng
 
 about:
   home: https://biophys-turin.github.io
   summary: "A simple tool to estimate mutual information."
-  license: MIT
+  license: GPL-2.0-or-later
+  description: |
+    Effiecnt tool to estimate mutual information
+  extra:
+    recipe-maintainers:
+      - fvalle1
+      - LeonardoAgasso
+      - biophys-turin
