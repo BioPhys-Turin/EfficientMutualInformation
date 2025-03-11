@@ -26,7 +26,6 @@ jobs:
           auto-update-conda: true
           channels: conda-forge,defaults
           activate-environment: build-env
-          environment-file: environment.yml
 
       - name: Install Mamba
         shell: bash -l {0}
