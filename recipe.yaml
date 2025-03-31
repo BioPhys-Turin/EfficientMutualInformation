@@ -5,7 +5,8 @@ package:
   version: 0.1.0
 
 source:
-  path: ./
+  # path: ./
+  url: https://github.com/BioPhys-Turin/EfficientMutualInformation/archive/refs/tags/{{ version }}.tar.gz
 
 build:
   number: 0
@@ -14,21 +15,16 @@ build:
 
 test:
   commands:
-    - $PREFIX/bin/hk
+    - hk --help
 
 requirements:
   build:
     - cmake
     - make
-    - gxx  # Use `clang` on macOS
-
-  host: 
-    - gxx
-    - libgcc-ng
+    - {{ compiler("cxx") }}
+    - {{ stdlib("c") }}
 
   run:
-    - gxx
-    - libgcc-ng
 
 about:
   home: https://biophys-turin.github.io

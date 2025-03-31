@@ -7,3 +7,4 @@ make
 mv local/src/hk .
 mkdir -p $PREFIX/bin
 cp hk $PREFIX/bin/
+cp hk /usr/local/bin/
