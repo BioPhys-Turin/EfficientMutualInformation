@@ -131,6 +131,11 @@ int main(int argc, char const *argv[])
 
     if(argc > 1){
         filename = std::string(argv[1]);
+        if (filename.find("--help") != std::string::npos)
+        {
+            std::cout << "Usage: <filename> [<num_threads>]" << std::endl;
+            return 0;
+        }
     }else{
         std::cerr << "Please provide a file to read the data from" << std::endl;
         return 0;
