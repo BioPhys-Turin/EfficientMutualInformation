@@ -1,21 +1,17 @@
-context: {}
-package:
+{% set name = "emi" %}
+{% set version = "0.1.1" %}
 
-  name: emi
-  version: 0.1.0
+package:
+  name: {{ name|lower }}
+  version: {{version}}
 
 source:
-  # path: ./
-  url: https://github.com/BioPhys-Turin/EfficientMutualInformation/archive/refs/tags/{{ version }}.tar.gz
+  url: https://github.com/BioPhys-Turin/EfficientMutualInformation/archive/refs/tags/{{ version }}.tar.gz 
+  sha256: 1e64bef7f56a3c02a96b0e89ebc91706cf305471ce352766e9c7eb89ce5a3aa6
 
 build:
   number: 0
-  script_env:
-    CXXFLAGS: "-std=c++14 -O3 -Wall -Wextra -Wpedantic -Werror"
-
-test:
-  commands:
-    - hk --help
+  skip: True  # [win or osx]
 
 requirements:
   build:
@@ -23,11 +19,21 @@ requirements:
     - make
     - {{ compiler("cxx") }}
     - {{ stdlib("c") }}
-
   run:
+
+test: 
+  commands:
+    - hk --help
 
 about:
   home: https://biophys-turin.github.io
-  summary: A simple tool to estimate mutual information.
-  license: MIT
+  summary: "A simple tool to estimate mutual information."
+  license: GPL-2.0-or-later
+  license_file: LICENSE
+  description: |
+    Effiecnt tool to estimate mutual information
 
+extra:
+  recipe-maintainers:
+    - fvalle1
+    - LeonardoAgasso
